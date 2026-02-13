@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login | MediFinance AI</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="glass-card" style="border-radius: 0; padding: 1rem 5%;">
+        <div class="logo">
+            <i class="fa-solid fa-heart-pulse highlight"></i>
+            Medi<span>Finance</span> AI
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="emergency-fund.html">Emergency Fund</a></li>
+            <li><a href="hospital-loan.html">Hospital Loan</a></li>
+            <li><a href="hospital-details.html">Hospitals</a></li>
+            <li><a href="budget-planning.html">Budget AI</a></li>
+        </ul>
+    </nav>
+
+    <section class="login-container">
+        <div class="glass-card auth-card">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <h2 style="margin-bottom: 5px;">Welcome Back</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Access your health dashboard</p>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-envelope"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        <input type="email" class="glass-input"
+                            style="width: 100%; padding-left: 40px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px 12px 12px 40px; color: white;"
+                            placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-lock"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        <input type="password" class="glass-input"
+                            style="width: 100%; padding-left: 40px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px 12px 12px 40px; color: white;"
+                            placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    Log In <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+                </button>
+            </form>
+
+            <!-- Signup Form (Hidden) -->
+            <form id="signupForm" class="hidden" onsubmit="handleSignup(event)">
+                <h2 style="margin-bottom: 5px;">Create Account</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Join the secure health network</p>
+
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-user"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        <input type="text" class="glass-input"
+                            style="width: 100%; padding-left: 40px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px 12px 12px 40px; color: white;"
+                            placeholder="John Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-envelope"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        <input type="email" class="glass-input"
+                            style="width: 100%; padding-left: 40px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px 12px 12px 40px; color: white;"
+                            placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Create Password</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-lock"
+                            style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                        <input type="password" class="glass-input"
+                            style="width: 100%; padding-left: 40px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px 12px 12px 40px; color: white;"
+                            placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    Sign Up <i class="fa-solid fa-user-plus" style="margin-left: 8px;"></i>
+                </button>
+            </form>
+
+            <div class="social-login">
+                <div class="social-btn"><i class="fa-brands fa-google"></i></div>
+                <div class="social-btn"><i class="fa-brands fa-apple"></i></div>
+                <div class="social-btn"><i class="fa-solid fa-fingerprint"></i></div>
+            </div>
+
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted);">
+                By continuing, you agree to our Terms of Service and Privacy Policy.
+            </p>
+        </div>
+    </section>
+
+    <script src="js/script.js"></script>
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
+
+            setTimeout(() => {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', 'Rahul Sharma'); // Mock User
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...';
+
+            setTimeout(() => {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', 'New User');
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    </script>
+</body>
+
+</html>

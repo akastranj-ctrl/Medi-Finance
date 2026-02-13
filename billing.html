@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Billing | MediFinance AI</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bill-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .bill-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bill-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        .pay-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .pay-btn:hover,
+        .pay-btn.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .emi-badge {
+            background: var(--gold-accent);
+            color: black;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="glass-card" style="border-radius: 0; padding: 1rem 5%;">
+        <div class="logo">
+            <i class="fa-solid fa-heart-pulse highlight"></i>
+            Medi<span>Finance</span> AI
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="emergency-fund.html">Emergency Fund</a></li>
+            <li><a href="hospital-loan.html">Hospital Loan</a></li>
+            <li><a href="hospital-details.html">Hospitals</a></li>
+            <li><a href="budget-planning.html">Budget AI</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" style="min-height: auto; padding-top: 2rem;">
+        <h2>Smart <span class="highlight">Discharge Billing</span></h2>
+        <p>Instant Settlements & Easy EMI Conversion</p>
+    </section>
+
+    <div class="bill-container">
+        <!-- Search Section -->
+        <div class="glass-card" id="searchSection">
+            <h3 style="margin-bottom: 1rem;">View Hospital Bill</h3>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="patientId" class="glass-input" placeholder="Enter Patient ID (e.g. PAT-2026-001)"
+                    style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                <button onclick="fetchBill()" class="btn-primary">Fetch Bill</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
+                <i class="fa-solid fa-circle-info"></i> Logged in users can see bills automatically.
+            </p>
+        </div>
+
+        <!-- Bill Details (Hidden) -->
+        <div id="billDetails" class="glass-card bill-card" style="display: none; animation: fadeIn 0.5s;">
+            <div class="bill-header">
+                <div>
+                    <h3 id="patientName">Rahul Sharma</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">ID: <span id="displayId">PAT-2026-001</span>
+                        | AIIMS Delhi</p>
+                </div>
+                <div style="text-align: right;">
+                    <span
+                        style="background: rgba(255, 68, 68, 0.2); color: #ff4444; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem;">State:
+                        Unpaid</span>
+                </div>
+            </div>
+
+            <div id="billItems">
+                <!-- Items injected by JS -->
+            </div>
+
+            <div class="total-row">
+                <span>Total Amount Due</span>
+                <span id="totalAmount">₹45,000</span>
+            </div>
+
+            <div
+                style="margin-top: 1.5rem; padding: 1rem; background: rgba(0, 255, 136, 0.05); border-radius: 10px; border: 1px dashed var(--primary-color); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong><i class="fa-solid fa-shield-halved"></i> Linked Insurance Found</strong>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Star Health Premier Policy</p>
+                </div>
+                <label class="switch" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="insuranceToggle" onchange="toggleInsurance()">
+                    <span style="color: var(--primary-color);">Apply Cover</span>
+                </label>
+            </div>
+
+            <h4 style="margin-top: 2rem;">Select Payment Method</h4>
+            <div class="payment-options">
+                <div class="pay-btn active" onclick="selectPayment(this, 'upi')">
+                    <i class="fa-solid fa-mobile-screen"></i><br>UPI / QR
+                </div>
+                <div class="pay-btn" onclick="selectPayment(this, 'card')">
+                    <i class="fa-regular fa-credit-card"></i><br>Card
+                </div>
+                <div class="pay-btn" onclick="selectPayment(this, 'emi')">
+                    <i class="fa-solid fa-percent"></i><br>Convert to EMI <span class="emi-badge">No Cost</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%; margin-top: 2rem;" onclick="processPayment()">
+                Pay <span id="payAmount">₹45,000</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Check Login and Auto-fetch
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('patientId').value = "PAT-2026-001";
+                fetchBill();
+            }
+        });
+
+        const billData = {
+            "PAT-2026-001": {
+                name: "Rahul Sharma",
+                items: [
+                    { desc: "Room Charges (5 Days)", cost: 15000 },
+                    { desc: "ICU Charges (2 Days)", cost: 20000 },
+                    { desc: "Medicines & Consumables", cost: 5000 },
+                    { desc: "Doctor Consultation", cost: 5000 }
+                ],
+                total: 45000
+            }
+        };
+
+        let currentTotal = 0;
+
+        function fetchBill() {
+            const id = document.getElementById('patientId').value;
+            const data = billData[id];
+
+            if (data) {
+                document.getElementById('searchSection').style.display = 'none';
+                document.getElementById('billDetails').style.display = 'block';
+                document.getElementById('patientName').innerText = data.name;
+                document.getElementById('displayId').innerText = id;
+
+                const itemsContainer = document.getElementById('billItems');
+                itemsContainer.innerHTML = data.items.map(item => `
+                    <div class="bill-item">
+                        <span>${item.desc}</span>
+                        <span>₹${item.cost.toLocaleString()}</span>
+                    </div>
+                `).join('');
+
+                currentTotal = data.total;
+                updateTotalDisplay();
+            } else {
+                alert("Patient ID not found or no pending bills.");
+            }
+        }
+
+        function toggleInsurance() {
+            const toggle = document.getElementById('insuranceToggle');
+            if (toggle.checked) {
+                currentTotal = 45000 * 0.2; // 80% covered
+                alert("Insurance Applied! 80% of the bill covered.");
+            } else {
+                currentTotal = 45000;
+            }
+            updateTotalDisplay();
+        }
+
+        function updateTotalDisplay() {
+            document.getElementById('totalAmount').innerText = "₹" + currentTotal.toLocaleString();
+            document.getElementById('payAmount').innerText = "₹" + currentTotal.toLocaleString();
+        }
+
+        function selectPayment(btn, type) {
+            document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function processPayment() {
+            const btn = document.querySelector('.btn-primary[onclick="processPayment()"]');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+
+            setTimeout(() => {
+                alert("Payment Successful! Discharge Summary has been emailed.");
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
